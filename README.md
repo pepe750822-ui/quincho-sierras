@@ -10,7 +10,7 @@ Página del quincho con reserva online: calendario, turno, datos del cliente, se
   - `reservar`: crea la reserva y el link de Mercado Pago, y manda los emails.
   - `mp-webhook`: recibe el aviso de pago de Mercado Pago y confirma la seña.
   - `admin`: acciones del panel.
-- **Base de datos**: Supabase. El esquema está en `supabase/migrations/`. Las tablas tienen RLS activo sin políticas, así que solo el servidor accede con la clave secreta.
+- **Base de datos**: Supabase, compartida con el proyecto quiniela-metro. Todo lo del quincho usa el prefijo `quincho_`. El esquema está en `supabase/migrations/`. Las tablas tienen RLS activo sin políticas, así que solo el servidor accede con la clave secreta.
 
 ## Variables de entorno (Vercel > Settings > Environment Variables)
 

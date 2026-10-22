@@ -22,9 +22,9 @@ export default async function handler(req, res) {
     switch (b.accion) {
       case 'listar': {
         const [reservas, bloqueos, turnos, a] = await Promise.all([
-          db('reservas?select=*&order=fecha.desc,created_at.desc&limit=1000'),
-          db('bloqueos?select=*&order=fecha'),
-          db('turnos?select=*&order=orden'),
+          db('quincho_reservas?select=*&order=fecha.desc,created_at.desc&limit=1000'),
+          db('quincho_bloqueos?select=*&order=fecha'),
+          db('quincho_turnos?select=*&order=orden'),
           ajustes()
         ]);
         return res.json({ reservas, bloqueos, turnos, ajustes: a });
@@ -33,28 +33,28 @@ export default async function handler(req, res) {
         await confirmarSena(b.id, FORMAS[b.forma] || b.forma || 'Otro');
         return res.json({ ok: true });
       case 'pagado':
-        await db(`reservas?id=eq.${id}`, { method: 'PATCH', body: { estado: 'pagado' } });
+        await db(`quincho_reservas?id=eq.${id}`, { method: 'PATCH', body: { estado: 'pagado' } });
         return res.json({ ok: true });
       case 'cancelar':
-        await db(`reservas?id=eq.${id}`, { method: 'PATCH', body: { estado: 'cancelado' } });
+        await db(`quincho_reservas?id=eq.${id}`, { method: 'PATCH', body: { estado: 'cancelado' } });
         return res.json({ ok: true });
       case 'notas':
-        await db(`reservas?id=eq.${id}`, { method: 'PATCH', body: { notas: String(b.notas || '') } });
+        await db(`quincho_reservas?id=eq.${id}`, { method: 'PATCH', body: { notas: String(b.notas || '') } });
         return res.json({ ok: true });
       case 'bloquear':
         if (!/^\d{4}-\d{2}-\d{2}$/.test(b.fecha || '')) return res.status(400).json({ error: 'Fecha inválida.' });
-        await db('bloqueos', { method: 'POST', body: { fecha: b.fecha, motivo: b.motivo || null }, prefer: 'resolution=merge-duplicates' });
+        await db('quincho_bloqueos', { method: 'POST', body: { fecha: b.fecha, motivo: b.motivo || null }, prefer: 'resolution=merge-duplicates' });
         return res.json({ ok: true });
       case 'desbloquear':
-        await db(`bloqueos?fecha=eq.${encodeURIComponent(b.fecha || '')}`, { method: 'DELETE' });
+        await db(`quincho_bloqueos?fecha=eq.${encodeURIComponent(b.fecha || '')}`, { method: 'DELETE' });
         return res.json({ ok: true });
       case 'precio':
         if (!(Number(b.precio) >= 0)) return res.status(400).json({ error: 'Precio inválido.' });
-        await db(`turnos?id=eq.${id}`, { method: 'PATCH', body: { precio: Number(b.precio) } });
+        await db(`quincho_turnos?id=eq.${id}`, { method: 'PATCH', body: { precio: Number(b.precio) } });
         return res.json({ ok: true });
       case 'ajuste':
         if (!AJUSTES_EDITABLES.includes(b.clave)) return res.status(400).json({ error: 'Ajuste desconocido.' });
-        await db(`ajustes?clave=eq.${encodeURIComponent(b.clave)}`, { method: 'PATCH', body: { valor: String(b.valor ?? '') } });
+        await db(`quincho_ajustes?clave=eq.${encodeURIComponent(b.clave)}`, { method: 'PATCH', body: { valor: String(b.valor ?? '') } });
         return res.json({ ok: true });
       default:
         return res.status(400).json({ error: 'Acción desconocida.' });

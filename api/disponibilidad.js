@@ -2,7 +2,7 @@ import { rpc } from '../lib/db.js';
 
 export default async function handler(req, res) {
   try {
-    const rows = await rpc('ocupaciones');
+    const rows = await rpc('quincho_ocupaciones');
     const ocupados = {};
     for (const { fecha, turno } of rows) (ocupados[fecha] ||= []).includes(turno) || ocupados[fecha].push(turno);
     res.setHeader('Cache-Control', 'no-store');

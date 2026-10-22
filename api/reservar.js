@@ -27,7 +27,7 @@ export default async function handler(req, res) {
 
   let creada;
   try {
-    creada = await rpc('crear_reserva', { p: d });
+    creada = await rpc('quincho_crear_reserva', { p: d });
   } catch (e) {
     return res.status(409).json({ ok: false, error: e.message });
   }
