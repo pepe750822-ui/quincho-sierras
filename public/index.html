@@ -471,7 +471,9 @@ function paso4(box) {
     opciones.map(o => `<button class="chip ${state.pago === o.id ? "sel" : ""}" data-p="${o.id}"><b><span style="color:inherit;font-size:inherit">${o.nombre}</span><span style="color:var(--water);font-size:inherit">${o.monto}</span></b><span>${o.detalle}</span></button>`).join("") + `</div>`;
   if (state.pago === "pesos") {
     html += `<div class="pay-detail"><p style="margin:0">Vas a pagar ${peso(m.sena)} con Mercado Pago. Cuando se acredite, la reserva se confirma sola y te llega el email.</p>
-      ${state.mpLink ? `<a class="btn btn-primary" href="${state.mpLink}" target="_blank" rel="noopener">Pagar con Mercado Pago</a>` : `<button class="btn btn-primary" id="mpDemo">Pagar con Mercado Pago</button><p class="note" style="margin:0">En el prototipo este botón no cobra. Con tu cuenta conectada abre el pago real.</p>`}</div>`;
+      ${state.mpLink ? `<a class="btn btn-primary" href="${state.mpLink}" target="_blank" rel="noopener">Pagar con Mercado Pago</a>` : DEMO
+        ? `<button class="btn btn-primary" id="mpDemo">Pagar con Mercado Pago</button><p class="note" style="margin:0">En el prototipo este botón no cobra. Con tu cuenta conectada abre el pago real.</p>`
+        : `<a class="btn btn-primary" href="${waLink(`Hola! Quiero pagar la seña en pesos de la reserva ${state.id}.`)}" target="_blank" rel="noopener">Pedir el link de pago por WhatsApp</a><button class="btn btn-ghost" id="mpDemo">Ya lo pedí</button>`}</div>`;
   } else if (state.pago === "usd") {
     html += `<div class="pay-detail"><p style="margin:0">Transferí <b>${usd(m.sena)}</b> y mandanos el comprobante por WhatsApp indicando la reserva ${state.id}.</p>
       <div class="copyrow"><code id="cpUsd">${esc(CONFIG.PAGO_USD)}</code><button class="btn btn-ghost" data-copy="cpUsd">Copiar</button></div>
@@ -494,7 +496,7 @@ function paso4(box) {
 }
 function paso5(box) {
   setStepsDone();
-  const auto = state.pago === "pesos";
+  const auto = state.pago === "pesos" && !!state.mpLink;
   box.innerHTML = `<div class="done-box"><h3>¡Listo, ${esc(state.datos.nombre)}!</h3>
     <p style="margin:0">Tu reserva <b>${state.id}</b> para el ${fechaLarga(state.fecha)} (${turnoById(state.turno).nombre}) está registrada.
     ${auto ? "Cuando Mercado Pago acredite la seña te llega el email de confirmación." : "Apenas verifiquemos el pago te confirmamos por email y WhatsApp."}</p>
