@@ -1,0 +1,509 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quincho en las Sierras</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: una sola columna; cerro + agua arriba, luego lo que ofrece el lugar y la reserva en pasos sobre una tarjeta de piedra */
+:root {
+  --bg: #eef0ea;          /* piedra clara */
+  --surface: #f9faf6;
+  --ink: #1d2a24;         /* verde monte oscuro */
+  --muted: #5b6a61;
+  --line: #cfd6cc;
+  --water: #0d7a83;       /* pileta */
+  --water-ink: #ffffff;
+  --jarilla: #b9852a;     /* flor amarilla del monte */
+  --busy: #d9ddd4;
+  --ok: #2f7d4a;
+  --hill-1: #9fb1a0;
+  --hill-2: #6f8a76;
+  --hill-3: #3f5a4a;
+  --font-display: "Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --font-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+  --radius: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141c18; --surface: #1c2621; --ink: #e6ece6; --muted: #a2b1a7; --line: #33423a;
+    --water: #3fb3bb; --water-ink: #0b1a1c; --jarilla: #e0b155; --busy: #2a352f; --ok: #6cc28a;
+    --hill-1: #2c3d34; --hill-2: #23332b; --hill-3: #1a2721; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141c18; --surface: #1c2621; --ink: #e6ece6; --muted: #a2b1a7; --line: #33423a;
+  --water: #3fb3bb; --water-ink: #0b1a1c; --jarilla: #e0b155; --busy: #2a352f; --ok: #6cc28a;
+  --hill-1: #2c3d34; --hill-2: #23332b; --hill-3: #1a2721; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; margin: 0; }
+.wrap { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.05; text-wrap: balance; margin: 0; }
+a { color: var(--water); }
+button { font: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--jarilla); outline-offset: 2px; }
+
+.demo-band { background: var(--jarilla); color: #1d1608; font-size: 13px; font-weight: 600; text-align: center; }
+.demo-band .wrap { padding-block: 6px; }
+
+header.top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-block: 18px; }
+.brand { font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: -0.01em; }
+.brand small { display: block; font-family: var(--font-body); font-weight: 500; font-size: 12px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-radius: 999px; padding: 12px 22px; font-weight: 600; text-decoration: none; }
+.btn-primary { background: var(--water); color: var(--water-ink); }
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+.btn-ghost:hover { border-color: var(--ink); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* Hero a pantalla completa con foto; el texto va sobre un degradé oscuro para leerse con cualquier foto */
+.hero { position: relative; color: #fff; background: #1d2a24 url("img/hero.jpg") center 60% / cover no-repeat; }
+.hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(10,16,14,.55) 0%, rgba(10,16,14,.15) 45%, rgba(10,16,14,.75) 100%); }
+.hero .wrap { position: relative; padding-block: clamp(90px, 16vw, 180px) clamp(36px, 6vw, 64px); display: grid; gap: 20px; }
+.hero .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #f3d9a4; }
+.hero h1 { font-size: clamp(42px, 8vw, 92px); font-weight: 800; letter-spacing: -0.03em; max-width: 12ch; text-shadow: 0 2px 24px rgba(0,0,0,.35); }
+.hero h1 em { font-style: normal; color: #7fe0e6; }
+.hero p { font-size: 19px; color: rgba(255,255,255,.88); max-width: 52ch; margin: 0; }
+.hero .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.hero .btn-ghost { color: #fff; border-color: rgba(255,255,255,.6); backdrop-filter: blur(6px); background: rgba(255,255,255,.08); }
+.hero .btn-ghost:hover { border-color: #fff; }
+.hero .facts { display: flex; flex-wrap: wrap; gap: 8px 28px; margin-top: 18px; padding-top: 18px; border-top: 1px solid rgba(255,255,255,.25); font-size: 15px; color: rgba(255,255,255,.9); }
+.hero .facts b { font-family: var(--font-display); font-size: 22px; display: block; color: #fff; }
+
+.section-head { display: grid; gap: 6px; margin-bottom: 24px; }
+.section-head .tag, .feature .tag { font-size: 12px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--jarilla); }
+.section-head h2 { font-size: clamp(30px, 5vw, 44px); }
+
+.features .wrap { padding-block: 56px 32px; }
+.feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 22px; }
+.feature { display: grid; gap: 8px; align-content: start; }
+.feature figure { margin: 0 0 6px; border-radius: var(--radius); overflow: hidden; aspect-ratio: 4 / 3; max-width: 100%; background: var(--busy); }
+.feature img, .gallery img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s ease; }
+.feature:hover img, .gallery figure:hover img { transform: scale(1.04); }
+.feature h3 { font-size: 22px; }
+.feature p { margin: 0; color: var(--muted); }
+
+.gallery-sec .wrap { padding-block: 24px 48px; }
+.gallery { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: clamp(120px, 18vw, 210px); gap: 10px; }
+.gallery figure { margin: 0; border-radius: 12px; overflow: hidden; position: relative; background: var(--busy); }
+.gallery .g-big { grid-column: span 2; grid-row: span 2; }
+.gallery .g-wide { grid-column: span 2; }
+.gallery figcaption { position: absolute; left: 10px; bottom: 10px; font-size: 13px; font-weight: 600; color: #fff; background: rgba(10,16,14,.55); padding: 4px 10px; border-radius: 999px; }
+.photo-note { font-size: 13px; color: var(--muted); margin-top: 10px; }
+@media (max-width: 640px) {
+  .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gallery .g-big { grid-column: span 2; grid-row: span 1; }
+}
+
+.turnos .wrap { padding-block: 8px 40px; }
+.turnos h2 { font-size: 32px; margin-bottom: 16px; }
+.turno-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.turno-table th, .turno-table td { text-align: left; padding: 12px 8px; border-bottom: 1px solid var(--line); }
+.turno-table th { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.turno-table td:last-child, .turno-table th:last-child { text-align: right; }
+.note { color: var(--muted); font-size: 14px; margin-top: 10px; }
+
+#reservar .wrap { padding-block: 24px 64px; }
+.booking { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: clamp(18px, 4vw, 36px); display: grid; gap: 24px; }
+.booking h2 { font-size: clamp(30px, 5vw, 44px); }
+.steps { display: flex; flex-wrap: wrap; gap: 6px 18px; list-style: none; margin: 0; padding: 0; font-size: 14px; color: var(--muted); }
+.steps li { display: flex; align-items: center; gap: 6px; }
+.steps li span { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--line); display: inline-grid; place-items: center; font-size: 12px; font-weight: 600; }
+.steps li.on { color: var(--ink); font-weight: 600; }
+.steps li.on span { background: var(--water); border-color: var(--water); color: var(--water-ink); }
+.steps li.done span { background: var(--ok); border-color: var(--ok); color: #fff; }
+
+.cal-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.cal-head strong { font-family: var(--font-display); font-size: 22px; text-transform: capitalize; }
+.icon-btn { width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--line); background: transparent; color: var(--ink); font-size: 18px; }
+.cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; margin-top: 12px; }
+.cal .dow { font-size: 12px; text-align: center; color: var(--muted); font-weight: 600; text-transform: uppercase; }
+.day { aspect-ratio: 1 / 1; max-width: 100%; border-radius: 10px; border: 1.5px solid var(--line); background: transparent; color: var(--ink); font-variant-numeric: tabular-nums; font-weight: 600; position: relative; padding: 0; }
+.day:hover:not([disabled]) { border-color: var(--water); }
+.day[disabled] { background: var(--busy); color: var(--muted); border-color: transparent; cursor: not-allowed; text-decoration: line-through; }
+.day.partial::after { content: ""; position: absolute; left: 50%; bottom: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--jarilla); transform: translateX(-50%); }
+.day.sel { background: var(--water); color: var(--water-ink); border-color: var(--water); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 13px; color: var(--muted); margin-top: 10px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+.chips { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.chip { text-align: left; border: 1.5px solid var(--line); border-radius: 12px; background: transparent; color: var(--ink); padding: 12px 14px; display: grid; gap: 2px; }
+.chip b { font-family: var(--font-display); font-size: 18px; }
+.chip span { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chip.sel { border-color: var(--water); box-shadow: inset 0 0 0 1.5px var(--water); }
+.chip[disabled] { opacity: .45; cursor: not-allowed; }
+
+.form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.field { display: grid; gap: 4px; }
+.field.full { grid-column: 1 / -1; }
+.field label { font-size: 13px; font-weight: 600; }
+.field input, .field select, .field textarea { font: inherit; padding: 11px 12px; border-radius: 10px; border: 1.5px solid var(--line); background: var(--bg); color: var(--ink); width: 100%; }
+.field input:focus, .field select:focus { border-color: var(--water); outline: none; }
+.check { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; }
+.check input { margin-top: 4px; }
+.err { color: #c0392b; font-size: 13px; min-height: 1em; }
+
+.summary { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.summary div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+.summary dt { color: var(--muted); }
+.summary dd { margin: 0; font-weight: 600; text-align: right; }
+.summary .big dd { font-family: var(--font-display); font-size: 22px; color: var(--water); }
+
+.pay { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.pay .chip b { display: flex; justify-content: space-between; gap: 8px; }
+.pay-detail { border: 1px dashed var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 10px; }
+.copyrow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.copyrow code { background: var(--bg); padding: 6px 10px; border-radius: 8px; overflow-wrap: anywhere; user-select: all; font-size: 14px; }
+.nav { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px; }
+.done-box { text-align: left; display: grid; gap: 10px; }
+.done-box h3 { font-size: 28px; color: var(--ok); }
+
+footer .wrap { padding-block: 28px 96px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; color: var(--muted); font-size: 14px; }
+
+.wa-float { position: fixed; right: calc(18px + env(safe-area-inset-right, 0px)); bottom: calc(18px + env(safe-area-inset-bottom, 0px)); background: #1f9d55; color: #fff; border-radius: 999px; padding: 12px 18px; font-weight: 600; text-decoration: none; box-shadow: 0 6px 20px rgba(0,0,0,.18); display: flex; align-items: center; gap: 8px; z-index: 20; }
+.wa-float svg { width: 20px; height: 20px; }
+
+@media (max-width: 560px) {
+  .form { grid-template-columns: 1fr; }
+  .cal { gap: 4px; }
+  .day { border-radius: 8px; font-size: 14px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .step-panel { animation: rise .25s ease-out; }
+  @keyframes rise { from { transform: translateY(6px); opacity: .6; } to { transform: none; opacity: 1; } }
+}
+</style>
+
+<div class="demo-band" id="demoBand"><div class="wrap">Prototipo: precios, turnos y datos de pago son de ejemplo. No se guarda ni se cobra nada.</div></div>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">Quincho en las Sierras<small>Sierras de Córdoba</small></div>
+    <a class="btn btn-primary" href="#reservar">Reservar</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Sierras de Córdoba · Eventos privados</div>
+    <h1>Tu evento con pileta, <em>hidro</em> y vista al cerro</h1>
+    <p>Quincho equipado con parrilla, pileta e hidromasaje en plenas sierras de Córdoba. Cumpleaños, reuniones de familia y encuentros de empresa.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="#reservar">Reservar fecha</a>
+      <a class="btn btn-ghost" id="waHero" href="#" target="_blank" rel="noopener">Consultar por WhatsApp</a>
+    </div>
+    <div class="facts">
+      <span><b>40</b>personas máx.</span>
+      <span><b>3</b>turnos por día</span>
+      <span><b>Todo el año</b>hidro climatizado</span>
+    </div>
+  </div>
+</section>
+
+<section class="features">
+  <div class="wrap">
+    <div class="section-head"><span class="tag">El lugar</span><h2>Todo listo para tu juntada</h2></div>
+    <div class="feature-grid">
+      <div class="feature"><figure><img src="img/quincho.jpg" alt="Quincho iluminado de noche" loading="lazy"></figure><div class="tag">Quincho</div><h3>Parrilla y mesas para tu grupo</h3><p>Espacio techado con parrilla, horno de barro, heladera y vajilla. Capacidad de ejemplo: hasta 40 personas.</p></div>
+      <div class="feature"><figure><img src="img/pileta.jpg" alt="Pileta al aire libre con las sierras de fondo" loading="lazy"></figure><div class="tag">Pileta</div><h3>Pileta al aire libre</h3><p>Con solárium y reposeras. Temporada de verano, de noviembre a marzo.</p></div>
+      <div class="feature"><figure><img src="img/hidro.jpg" alt="Hidromasaje bajo el cielo estrellado" loading="lazy"></figure><div class="tag">Hidromasaje</div><h3>Hidro climatizado</h3><p>Disponible todo el año, ideal para las noches frescas de las sierras.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="gallery-sec">
+  <div class="wrap">
+    <div class="section-head"><span class="tag">Galería</span><h2>Así se vive un día en el quincho</h2></div>
+    <div class="gallery">
+      <figure class="g-big"><img src="img/hero.jpg" alt="Atardecer sobre las sierras" loading="lazy"><figcaption>Atardecer</figcaption></figure>
+      <figure><img src="img/pileta.jpg" alt="Pileta" loading="lazy"><figcaption>Pileta</figcaption></figure>
+      <figure><img src="img/parrilla.jpg" alt="Mesa y parrilla al atardecer" loading="lazy"><figcaption>Asado</figcaption></figure>
+      <figure class="g-wide"><img src="img/sierras.jpg" alt="Vista de las sierras de día" loading="lazy"><figcaption>La vista</figcaption></figure>
+      <figure><img src="img/hidro.jpg" alt="Hidromasaje de noche" loading="lazy"><figcaption>Hidro</figcaption></figure>
+      <figure><img src="img/quincho.jpg" alt="Quincho de noche" loading="lazy"><figcaption>Quincho</figcaption></figure>
+      <figure class="g-wide"><img src="img/hero.jpg" alt="Sierras al caer el sol" loading="lazy" style="object-position: center 75%"><figcaption>Noche de verano</figcaption></figure>
+    </div>
+    <p class="photo-note" id="photoNote">Imágenes ilustrativas: se reemplazan por fotos reales del lugar.</p>
+  </div>
+</section>
+
+<section class="turnos">
+  <div class="wrap">
+    <h2>Turnos y precios</h2>
+    <div style="overflow-x:auto">
+      <table class="turno-table" id="turnoTable"><thead><tr><th>Turno</th><th>Horario</th><th>Precio</th></tr></thead><tbody></tbody></table>
+    </div>
+    <p class="note" id="senaNote"></p>
+  </div>
+</section>
+
+<section id="reservar">
+  <div class="wrap">
+    <div class="booking">
+      <h2>Reservá tu fecha</h2>
+      <ol class="steps" id="steps">
+        <li><span>1</span>Fecha y turno</li>
+        <li><span>2</span>Tus datos</li>
+        <li><span>3</span>Confirmar</li>
+        <li><span>4</span>Pagar seña</li>
+      </ol>
+      <div id="panel"></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>Quincho en las Sierras · Sierras de Córdoba</span>
+    <span>Contacto: <span id="mailText"></span></span>
+  </div>
+</footer>
+
+<a class="wa-float" id="waFloat" href="#" target="_blank" rel="noopener" aria-label="Escribinos por WhatsApp">
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.2c0-.1-.2-.2-.5-.3z"/></svg>
+  WhatsApp
+</a>
+
+<script>
+// Valores de ejemplo para el modo demo. En el sitio publicado se reemplazan
+// por los que están cargados en la base de datos (tabla "ajustes" y "turnos").
+const CONFIG = {
+  WHATSAPP: "5493510000000",            // 54 + 9 + código de área + número, sin 0 ni 15
+  EMAIL: "reservas@tuquincho.com.ar",
+  SENA_PORCENTAJE: 30,
+  COTIZACION_USD: 1400,                 // pesos por dólar, para mostrar el monto en USD/USDT
+  TURNOS: [
+    { id: "dia",      nombre: "Día",          horario: "10:00 a 19:00",            precio: 180000 },
+    { id: "noche",    nombre: "Noche",        horario: "20:30 a 04:00",            precio: 220000 },
+    { id: "completo", nombre: "Día completo", horario: "10:00 a 04:00 del día siguiente", precio: 350000 }
+  ],
+  PAGO_USD: "Transferencia a cuenta en USD · Banco Ejemplo · CBU 0000000000000000000000 · Titular: Nombre Apellido",
+  USDT_RED: "TRC20 (Tron)",
+  USDT_WALLET: "TXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+};
+const API = "/api";
+let DEMO = true;
+const $ = (s) => document.querySelector(s);
+const peso = (n) => "$" + Math.round(n).toLocaleString("es-AR");
+const usd = (n) => "US$ " + (n / CONFIG.COTIZACION_USD).toLocaleString("es-AR", { maximumFractionDigits: 0 });
+const waLink = (txt) => `https://wa.me/${CONFIG.WHATSAPP}?text=${encodeURIComponent(txt)}`;
+const turnoById = (id) => CONFIG.TURNOS.find(t => t.id === id);
+const MESES = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+const iso = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const fechaLarga = (s) => { const [y,m,d] = s.split("-").map(Number); const f = new Date(y, m-1, d); return f.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); };
+
+async function cargarConfig() {
+  try {
+    const r = await fetch(`${API}/config`);
+    if (!r.ok) throw new Error();
+    Object.assign(CONFIG, await r.json());
+    DEMO = false;
+  } catch (e) { DEMO = true; }
+}
+function pintarConfig() {
+  $("#demoBand").hidden = !DEMO;
+  $("#mailText").textContent = CONFIG.EMAIL;
+  $("#waHero").href = $("#waFloat").href = waLink("¡Hola! Vi la página del quincho y quiero consultar disponibilidad.");
+  $("#turnoTable tbody").innerHTML = CONFIG.TURNOS.map(t => `<tr><td><b>${esc(t.nombre)}</b></td><td>${esc(t.horario)}</td><td>${peso(t.precio)}</td></tr>`).join("");
+  $("#senaNote").textContent = `Para reservar se abona una seña del ${CONFIG.SENA_PORCENTAJE}% y el resto el día del evento.${DEMO ? " Precios de ejemplo." : ""}`;
+}
+
+// Ocupación: { "2026-11-07": ["dia"], ... }
+let ocupados = {};
+function demoOcupados() {
+  const o = {}, hoy = new Date();
+  [[3,["completo"]],[5,["noche"]],[10,["dia"]],[11,["completo"]],[17,["noche"]],[24,["completo"]],[31,["dia","noche"]],[38,["completo"]]].forEach(([d, ts]) => {
+    const f = new Date(hoy); f.setDate(f.getDate() + d); o[iso(f)] = ts;
+  });
+  return o;
+}
+async function cargarOcupados() {
+  if (DEMO) { ocupados = demoOcupados(); return; }
+  try {
+    const r = await fetch(`${API}/disponibilidad`);
+    ocupados = (await r.json()).ocupados || {};
+  } catch (e) { ocupados = {}; }
+}
+function turnoLibre(fecha, id) {
+  const o = ocupados[fecha] || [];
+  if (o.includes("completo")) return false;
+  if (id === "completo") return o.length === 0;
+  return !o.includes(id);
+}
+const diaLleno = (fecha) => CONFIG.TURNOS.every(t => !turnoLibre(fecha, t.id));
+
+const state = { paso: 1, mes: new Date(new Date().getFullYear(), new Date().getMonth(), 1), fecha: null, turno: null, datos: {}, pago: null, id: null, mpLink: null };
+
+function setSteps() {
+  [...$("#steps").children].forEach((li, i) => {
+    li.className = i + 1 === state.paso ? "on" : i + 1 < state.paso ? "done" : "";
+  });
+}
+function render() {
+  setSteps();
+  const p = $("#panel");
+  p.innerHTML = "";
+  const box = document.createElement("div");
+  box.className = "step-panel";
+  box.style.display = "grid"; box.style.gap = "20px";
+  p.appendChild(box);
+  ({ 1: paso1, 2: paso2, 3: paso3, 4: paso4, 5: paso5 })[state.paso](box);
+}
+
+function paso1(box) {
+  const m = state.mes, hoy = new Date(); hoy.setHours(0,0,0,0);
+  const primerDow = (new Date(m.getFullYear(), m.getMonth(), 1).getDay() + 6) % 7; // lunes = 0
+  const dias = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate();
+  const minMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  let html = `<div><div class="cal-head"><button class="icon-btn" id="prev" aria-label="Mes anterior" ${m <= minMes ? "disabled" : ""}>‹</button><strong>${MESES[m.getMonth()]} ${m.getFullYear()}</strong><button class="icon-btn" id="next" aria-label="Mes siguiente">›</button></div><div class="cal">`;
+  ["lun","mar","mié","jue","vie","sáb","dom"].forEach(d => html += `<div class="dow">${d}</div>`);
+  for (let i = 0; i < primerDow; i++) html += `<div></div>`;
+  for (let d = 1; d <= dias; d++) {
+    const f = new Date(m.getFullYear(), m.getMonth(), d), s = iso(f);
+    const pasado = f < hoy, lleno = diaLleno(s), parcial = !lleno && (ocupados[s] || []).length > 0;
+    const cls = ["day", parcial ? "partial" : "", state.fecha === s ? "sel" : ""].join(" ");
+    html += `<button class="${cls}" data-f="${s}" ${pasado || lleno ? "disabled" : ""} aria-label="${fechaLarga(s)}${lleno ? ", ocupado" : ""}">${d}</button>`;
+  }
+  html += `</div><div class="legend"><span><i style="background:var(--water)"></i>Elegido</span><span><i style="background:var(--busy)"></i>Ocupado</span><span><i style="background:var(--jarilla);border-radius:50%"></i>Queda algún turno</span></div></div>`;
+  if (state.fecha) {
+    html += `<div><p style="margin:0 0 10px;font-weight:600">Turnos para el ${fechaLarga(state.fecha)}</p><div class="chips">` +
+      CONFIG.TURNOS.map(t => `<button class="chip ${state.turno === t.id ? "sel" : ""}" data-t="${t.id}" ${turnoLibre(state.fecha, t.id) ? "" : "disabled"}><b>${t.nombre}</b><span>${t.horario}</span><span>${turnoLibre(state.fecha, t.id) ? peso(t.precio) : "Ocupado"}</span></button>`).join("") + `</div></div>`;
+  }
+  html += `<div class="nav"><span></span><button class="btn btn-primary" id="go" ${state.fecha && state.turno ? "" : "disabled"}>Continuar</button></div>`;
+  box.innerHTML = html;
+  box.querySelector("#prev").onclick = () => { state.mes = new Date(m.getFullYear(), m.getMonth() - 1, 1); render(); };
+  box.querySelector("#next").onclick = () => { state.mes = new Date(m.getFullYear(), m.getMonth() + 1, 1); render(); };
+  box.querySelectorAll(".day[data-f]").forEach(b => b.onclick = () => { state.fecha = b.dataset.f; if (state.turno && !turnoLibre(state.fecha, state.turno)) state.turno = null; render(); });
+  box.querySelectorAll(".chip[data-t]").forEach(b => b.onclick = () => { state.turno = b.dataset.t; render(); });
+  box.querySelector("#go").onclick = () => { state.paso = 2; render(); };
+}
+
+function paso2(box) {
+  const d = state.datos;
+  box.innerHTML = `
+  <form class="form" id="f" novalidate>
+    <div class="field"><label for="nombre">Nombre</label><input id="nombre" required autocomplete="given-name" value="${esc(d.nombre)}"></div>
+    <div class="field"><label for="apellido">Apellido</label><input id="apellido" required autocomplete="family-name" value="${esc(d.apellido)}"></div>
+    <div class="field"><label for="nacimiento">Fecha de nacimiento</label><input id="nacimiento" type="date" required value="${esc(d.nacimiento)}"></div>
+    <div class="field"><label for="personas">Cantidad de personas</label><input id="personas" type="number" min="1" max="40" required value="${esc(d.personas)}"></div>
+    <div class="field"><label for="telefono">Teléfono (WhatsApp)</label><input id="telefono" type="tel" required autocomplete="tel" placeholder="351 555 1234" value="${esc(d.telefono)}"></div>
+    <div class="field"><label for="email">Email</label><input id="email" type="email" required autocomplete="email" value="${esc(d.email)}"></div>
+    <div class="field full"><label for="comentario">Tipo de evento o comentario (opcional)</label><input id="comentario" value="${esc(d.comentario)}" placeholder="Cumpleaños de 40, asado familiar…"></div>
+    <label class="check field full"><input type="checkbox" id="acepto" ${d.acepto ? "checked" : ""}> <span>Acepto el reglamento del lugar y que mis datos se usen para gestionar la reserva y recibir novedades (Ley 25.326).</span></label>
+    <div class="err field full" id="err" role="alert"></div>
+  </form>
+  <div class="nav"><button class="btn btn-ghost" id="back">Volver</button><button class="btn btn-primary" id="go">Continuar</button></div>`;
+  box.querySelector("#back").onclick = () => { leer(); state.paso = 1; render(); };
+  box.querySelector("#go").onclick = () => {
+    leer();
+    const e = validar(state.datos);
+    if (e) { box.querySelector("#err").textContent = e; return; }
+    state.paso = 3; render();
+  };
+  function leer() {
+    ["nombre","apellido","nacimiento","personas","telefono","email","comentario"].forEach(k => state.datos[k] = box.querySelector("#" + k).value.trim());
+    state.datos.acepto = box.querySelector("#acepto").checked;
+  }
+}
+function edad(n) { const b = new Date(n + "T00:00"), h = new Date(); let a = h.getFullYear() - b.getFullYear(); if (h < new Date(h.getFullYear(), b.getMonth(), b.getDate())) a--; return a; }
+function validar(d) {
+  if (!d.nombre || !d.apellido) return "Completá nombre y apellido.";
+  if (!d.nacimiento) return "Completá tu fecha de nacimiento.";
+  if (edad(d.nacimiento) < 18) return "Quien reserva tiene que ser mayor de 18 años.";
+  if (!(+d.personas >= 1)) return "Indicá cuántas personas van a ir.";
+  if (d.telefono.replace(/\D/g, "").length < 8) return "Revisá el teléfono: escribilo con código de área.";
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(d.email)) return "Revisá el email, parece incompleto.";
+  if (!d.acepto) return "Para seguir tenés que aceptar el reglamento.";
+  return "";
+}
+
+function montos() { const t = turnoById(state.turno); return { total: t.precio, sena: t.precio * CONFIG.SENA_PORCENTAJE / 100 }; }
+function paso3(box) {
+  const t = turnoById(state.turno), d = state.datos, m = montos();
+  box.innerHTML = `
+  <dl class="summary">
+    <div><dt>Fecha</dt><dd style="text-transform:capitalize">${fechaLarga(state.fecha)}</dd></div>
+    <div><dt>Turno</dt><dd>${t.nombre} · ${t.horario}</dd></div>
+    <div><dt>A nombre de</dt><dd>${esc(d.nombre)} ${esc(d.apellido)}</dd></div>
+    <div><dt>Personas</dt><dd>${esc(d.personas)}</dd></div>
+    <div><dt>Contacto</dt><dd>${esc(d.telefono)} · ${esc(d.email)}</dd></div>
+    <div><dt>Total</dt><dd>${peso(m.total)}</dd></div>
+    <div class="big"><dt>Seña para reservar (${CONFIG.SENA_PORCENTAJE}%)</dt><dd>${peso(m.sena)}</dd></div>
+  </dl>
+  <p class="note" style="margin:0">Al confirmar, la fecha queda apartada por 48 horas hasta que se acredite la seña.</p>
+  <div class="err" id="err" role="alert"></div>
+  <div class="nav"><button class="btn btn-ghost" id="back">Volver</button><button class="btn btn-primary" id="go">Confirmar reserva</button></div>`;
+  box.querySelector("#back").onclick = () => { state.paso = 2; render(); };
+  box.querySelector("#go").onclick = async (ev) => {
+    ev.target.disabled = true; ev.target.textContent = "Guardando…";
+    try {
+      const r = await enviar();
+      state.id = r.id; state.mpLink = r.mpLink || null;
+      state.paso = 4; render();
+    } catch (e) {
+      box.querySelector("#err").textContent = e.message || "No pudimos guardar la reserva. Probá de nuevo o escribinos por WhatsApp.";
+      ev.target.disabled = false; ev.target.textContent = "Confirmar reserva";
+    }
+  };
+}
+async function enviar() {
+  const m = montos();
+  const payload = { accion: "reservar", fecha: state.fecha, turno: state.turno, ...state.datos, total: m.total, sena: m.sena };
+  if (DEMO) { await new Promise(r => setTimeout(r, 600)); return { id: "R-" + Date.now().toString().slice(-6) }; }
+  const r = await fetch(`${API}/reservar`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+  const j = await r.json();
+  if (!j.ok) throw new Error(j.error || "No pudimos guardar la reserva.");
+  return j;
+}
+
+function paso4(box) {
+  const m = montos();
+  const opciones = [
+    { id: "pesos", nombre: "Pesos", detalle: "Mercado Pago: tarjeta, débito o dinero en cuenta", monto: peso(m.sena) },
+    { id: "usd",   nombre: "Dólares", detalle: "Transferencia en USD", monto: usd(m.sena) },
+    { id: "usdt",  nombre: "USDT", detalle: `Cripto · red ${CONFIG.USDT_RED}`, monto: usd(m.sena).replace("US$", "USDT") }
+  ];
+  let html = `<p style="margin:0">Reserva <b>${state.id}</b> guardada. Elegí cómo pagar la seña:</p><div class="pay chips">` +
+    opciones.map(o => `<button class="chip ${state.pago === o.id ? "sel" : ""}" data-p="${o.id}"><b><span style="color:inherit;font-size:inherit">${o.nombre}</span><span style="color:var(--water);font-size:inherit">${o.monto}</span></b><span>${o.detalle}</span></button>`).join("") + `</div>`;
+  if (state.pago === "pesos") {
+    html += `<div class="pay-detail"><p style="margin:0">Vas a pagar ${peso(m.sena)} con Mercado Pago. Cuando se acredite, la reserva se confirma sola y te llega el email.</p>
+      ${state.mpLink ? `<a class="btn btn-primary" href="${state.mpLink}" target="_blank" rel="noopener">Pagar con Mercado Pago</a>` : `<button class="btn btn-primary" id="mpDemo">Pagar con Mercado Pago</button><p class="note" style="margin:0">En el prototipo este botón no cobra. Con tu cuenta conectada abre el pago real.</p>`}</div>`;
+  } else if (state.pago === "usd") {
+    html += `<div class="pay-detail"><p style="margin:0">Transferí <b>${usd(m.sena)}</b> y mandanos el comprobante por WhatsApp indicando la reserva ${state.id}.</p>
+      <div class="copyrow"><code id="cpUsd">${esc(CONFIG.PAGO_USD)}</code><button class="btn btn-ghost" data-copy="cpUsd">Copiar</button></div>
+      <a class="btn btn-primary" href="${waLink(`Hola! Envío el comprobante de la seña en USD de la reserva ${state.id}.`)}" target="_blank" rel="noopener">Enviar comprobante por WhatsApp</a></div>`;
+  } else if (state.pago === "usdt") {
+    html += `<div class="pay-detail"><p style="margin:0">Enviá <b>${usd(m.sena).replace("US$", "")} USDT</b> por la red <b>${CONFIG.USDT_RED}</b> a esta dirección. Revisá la red antes de enviar: si usás otra, los fondos se pierden.</p>
+      <div class="copyrow"><code id="cpUsdt">${esc(CONFIG.USDT_WALLET)}</code><button class="btn btn-ghost" data-copy="cpUsdt">Copiar</button></div>
+      <a class="btn btn-primary" href="${waLink(`Hola! Envié la seña en USDT de la reserva ${state.id}. Te paso el hash de la transacción:`)}" target="_blank" rel="noopener">Enviar el hash por WhatsApp</a></div>`;
+  }
+  html += `<div class="nav"><span></span>${state.pago && state.pago !== "pesos" ? `<button class="btn btn-ghost" id="fin">Ya envié el pago</button>` : ""}</div>`;
+  box.innerHTML = html;
+  box.querySelectorAll("[data-p]").forEach(b => b.onclick = () => { state.pago = b.dataset.p; render(); });
+  box.querySelectorAll("[data-copy]").forEach(b => b.onclick = async () => {
+    const el = document.getElementById(b.dataset.copy);
+    try { await navigator.clipboard.writeText(el.textContent); b.textContent = "Copiado"; }
+    catch (e) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = "Seleccionado, copialo"; }
+  });
+  const fin = box.querySelector("#fin"); if (fin) fin.onclick = () => { state.paso = 5; render(); };
+  const mp = box.querySelector("#mpDemo"); if (mp) mp.onclick = () => { state.paso = 5; render(); };
+}
+function paso5(box) {
+  setStepsDone();
+  const auto = state.pago === "pesos";
+  box.innerHTML = `<div class="done-box"><h3>¡Listo, ${esc(state.datos.nombre)}!</h3>
+    <p style="margin:0">Tu reserva <b>${state.id}</b> para el ${fechaLarga(state.fecha)} (${turnoById(state.turno).nombre}) está registrada.
+    ${auto ? "Cuando Mercado Pago acredite la seña te llega el email de confirmación." : "Apenas verifiquemos el pago te confirmamos por email y WhatsApp."}</p>
+    ${DEMO ? `<p class="note" style="margin:0">Prototipo: en el sitio publicado acá se guarda la reserva, se bloquea la fecha y se envía el email a ${esc(state.datos.email)}.</p>` : ""}
+    <div><button class="btn btn-ghost" id="otra">Hacer otra reserva</button></div></div>`;
+  box.querySelector("#otra").onclick = () => { Object.assign(state, { paso: 1, fecha: null, turno: null, datos: {}, pago: null, id: null }); render(); };
+}
+function setStepsDone() { [...$("#steps").children].forEach(li => li.className = "done"); }
+function esc(s) { return String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+
+cargarConfig().then(() => { pintarConfig(); return cargarOcupados(); }).then(render);
+</script>

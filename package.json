@@ -1,0 +1,6 @@
+{
+  "name": "quincho-sierras",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" }
+}
